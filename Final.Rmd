@@ -1,0 +1,31 @@
+---
+title: "Final_Project"
+author: "Joe Faith and Jeff Camp"
+date: "2023-05-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Working on this final project are Joe Faith and Jeff Camp
+
+2. We will be working with a dataset consisting of the 2022 stats for receivers in college, we will be using the data to attempt to guess what order receivers should go in the upcoming draft. Our dataset consists of the team, conference, games played, receptions, yards, avg yards/reception, touchdowns, rush attempts, rush yards, avg yards/rush, rush touchdowns, plays from scrimmage, yards from scrimmage, avg yards from scrimmage/reception, and touchdowns from scrimmage. We will also use a table from the NFL 2023 draft to see what order the receivers actually went to check how correct our hypothesis was. 
+
+3. We will create graphs and chart in order to estimate the order in which the receivers will go, in order to make the most accurate graphs we will need to clean the data. The only data we are missing would be avg rushing yards per rushing attempt, this data is missing because there is an NA value which we can change to "0" because all of the NA values in this dataset are 0.
+
+This is also the dataset we plan on using for the College receiving stats.
+```{r}
+library(readr)
+dataFile="https://raw.githubusercontent.com/JFaith17/DS202_FinalProject/main/sportsref_download.csv"
+data1 <- read.csv(dataFile)
+```
+
+```{r}
+
+```
+
+
+
+
