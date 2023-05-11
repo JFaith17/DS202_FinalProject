@@ -1,0 +1,146 @@
+---
+title: "Final_Project"
+author: "Joe Faith and Jeff Camp"
+date: "2023-05-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Working on this final project are Joe Faith and Jeff Camp.
+
+2. We will be working with a dataset consisting of the 2022 stats for receivers in college, we will be using the data to find which conference has the best wide receivers. Our dataset consists of the team, conference, games played, receptions, yards, avg yards/reception, touchdowns, rush attempts, rush yards, avg yards/rush, rush touchdowns, plays from scrimmage, yards from scrimmage, avg yards from scrimmage/reception, and touchdowns from scrimmage.
+  
+3. We will create graphs and charts in order to find which conferences excel in terms of receiving, in order to make the most accurate graphs we will need to clean the data. The only data we are missing would be avg rushing yards per rushing attempt, this data is missing because there is an NA value which we can change to "0" because all of the NA values in this dataset are 0. Additionally, the csv dataset included text descriptions of the columns at the first entry in the column, we replaced these with NA in order to assist GGPlot in correctly making the charts.
+  
+Follow up on cases where expectations do not match and try to identify a reason for why your expectations are not met: are there outliers? data entry errors? data encoding problems?
+  
+  
+what else needs to be changed: are variables in the right format?  
+  Yes, variables are in the correct format. Nothing needed to be changed on that front.  
+
+This is also the dataset we plan on using for the College receiving stats.
+```{r}
+library(readr)
+library(ggplot2)
+dataFile="https://raw.githubusercontent.com/JFaith17/DS202_FinalProject/main/sportsref_download.csv"
+df <- read.csv(dataFile)
+head(df)
+```
+
+
+```{r}
+df[is.na(df)] <- 0
+df[is.null(df)] <- 0
+df$X <- as.numeric(df$X)
+df$X.4 <- as.numeric(df$X.4)
+df$Receiving <- as.numeric(df$Receiving)
+df$X.5 <- as.numeric(df$X.5)
+df$X.6 <- as.numeric(df$X.6)
+df$X.7 <- as.numeric(df$X.7)
+df$Rushing <- as.numeric(df$Rushing)
+df$X.8 <- as.numeric(df$X.8)
+df$X.9 <- as.numeric(df$X.9)
+df$X.10 <- as.numeric(df$X.10)
+df$Scrimmage <- as.numeric(df$Scrimmage)
+df$X.11 <- as.numeric(df$X.11)
+df$X.12 <- as.numeric(df$X.12)
+df$X.13 <- as.numeric(df$X.13)
+df$X.3[1] <- NA
+df$X.2[1] = NA
+df$Receiving[1] = NA
+df$avgYardsPerGame = (df$X.5) / (df$X.4)
+head(df)
+```
+
+Jitter Plot
+
+```{r}
+library(dplyr)
+df %>% ggplot(aes(x = Receiving, y = X.7)) +
+  geom_jitter(color = "blue") +
+  labs(title = "Touchdowns vs. Receptions",
+       x = "Receptions",
+       y = "Touchdowns") +
+  theme_bw() + facet_wrap(~df$X.3)
+```
+
+Based on these plots you can see that there is a very close relation between most of the conferences and the amount of touchdowns and receptions. Based on these charts most receivers in most conferences are around the 50 receptions and 5 touchdown area. While there seem to be a couple outliers in each conference where a couple players had much higher than average receptions and touchdowns. The main findings of the chart would be that receptions and touchdowns seem to have a positive coorelation and that the Big 10 seemed to have the highest averages based on these charts. m
+  
+  Box Plot
+  
+```{r}
+library(ggplot2)
+
+ggplot(data = df, aes(x = X.3, y = avgYardsPerGame)) +
+  geom_boxplot()
+```
+  
+  what is the structure of the plot, which variable is shown, what is the main finding? 
+  The variable shown is conference as it corresponds to average Yards Per Game, meaning, the main finding was that different conferences have these different yards per game quartiles and values. The most successful conference according to this (in terms of receiving) is CUSA. 
+
+Bar Plot
+  
+```{r}
+ggplot(data = df, aes(x = X.3, y = avgYardsPerGame)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "darkblue") +
+  labs(title = "Bar Plot", x = "Conference", y = "Total Avg Yards / Game") +
+  theme_minimal()
+```
+  
+  
+  what is the structure of the plot, which variable is shown, what is the main finding? The plot is a bar chart, it demonstrates that the highest combined total yards / game of all conferences is the SEC. This means that the SEC has the most passing yards per game of any conference.
+  
+  
+  Histogram
+  
+```{r}
+ggplot(data = df, aes(x = avgYardsPerGame)) +
+  geom_histogram(fill = "skyblue", color = "darkblue", bins = 30) +
+  labs(title = "Histogram", x = "Total Avg Yards / Game", y = "") +
+  facet_wrap(~ X.3)
+```
+  
+  
+  what is the structure of the plot, which variable is shown, what is the main finding? 
+Based on the provided plot, the main finding is that most conferences exhibit similar patterns in terms of the distribution of avgYardsPerGame. The histogram visualization allows for a comparison of the frequency or count of different values of avgYardsPerGame across different conferences.
+
+
+  Mosaic Plot
+  
+```{r}
+conference_touchdowns <- aggregate(X.7 ~ X.3, df, sum)
+
+mosPlot <- table(conference_touchdowns$X.7, conference_touchdowns$X.3)
+mosPlot
+
+mosaicplot(mosPlot, color = conference_touchdowns$X.7, main = "Touchdowns by Conference", xlab = "Conference", ylab = "Touchdowns")
+```
+
+By this graph of the Touchdowns by Conference, you can see that there was a massive gap in the number of touchdowns scored by each conference. It seems that Ind was one of the highest scoring conferences, while the SEC was not far behind them. Overall most of the conferences had extremely similar receiving touchdowns according to this graph and that makes it very easy to use this graph to show that receiving talent is not always derived from one conference. 
+
+
+```{r}
+ggplot(df, aes(x = X.4)) +
+  geom_line(aes(y = X.6, color = X.3), size = 1) +
+  labs(title = "Best Receivers", x = "Games Played", y = "Average Yards per Reception") +
+  scale_color_discrete(name = "Conference")
+```
+This graph shows that games played and average receiving yards do not always have the a linear trajectory. There were many receivers in the class that as they played more games they may have even dropped in average receiving yards. Overall the best conference for average receiving yards seems to be the Big10 because they have the highest average line length. While the most consistent would be the SEC as they had a line that did not deviate from their initial path as much as the others did. 
+
+By examining the panels within the facetted plot, it appears that the distribution of avgYardsPerGame is relatively consistent across conferences. This suggests that, on average, teams within different conferences have similar performance in terms of the average yards gained per game. There are no clear outliers or drastic differences that stand out in the histogram, indicating a general similarity in the distribution of avgYardsPerGame between conferences.
+
+The findings suggest that, in terms of offensive performance measured by average yards per game, the conferences analyzed do not significantly differ from each other. This observation may indicate a level of competitive balance or similarity in offensive strategies across conferences.
+
+##Two Way Relationships
+
+The two-way relationship observed in your project suggests that conferences typically associated with higher prestige tend to exhibit a greater number of absolute passing yards compared to other conferences. However, when it comes to average passing yards, all conferences display a similar range.
+
+This finding implies that conferences with a higher reputation or perceived competitiveness may have teams that accumulate more passing yards in total. This could be attributed to factors such as stronger offensive systems, talented quarterbacks, or a greater emphasis on passing plays. The presence of more absolute passing yards in prestigious conferences might reflect a higher level of competition and offensive prowess within those conferences.
+
+On the other hand, despite the differences in absolute passing yards, the similarity in average passing yards across conferences suggests that the average performance of passing offenses tends to be consistent across different conferences. This finding implies that conferences, regardless of their prestige, have similar tendencies when it comes to the average passing efficiency or productivity of their teams.
+
+Overall, this two-way relationship highlights the potential influence of conference prestige on the total passing yards accumulated, while also emphasizing the comparable average passing yardage across conferences. It provides insights into how the prestige or competitiveness of a conference may impact the overall passing performance of its teams, shedding light on the interplay between conference reputation and passing statistics.
+
